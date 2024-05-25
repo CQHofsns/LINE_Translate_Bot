@@ -8,7 +8,7 @@ __pycache__/
 *$py.class
 
 # Custom
-cache_dir/
+translate_model/cache_dir/
 
 # C extensions
 *.so

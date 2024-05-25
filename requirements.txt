@@ -1,2 +1,7 @@
 transformers
+transformers[sentencepiece]
+sentencepiece
 langdetect
+datasets
+accelerate
+googletrans==3.1.0a0
