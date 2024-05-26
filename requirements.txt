@@ -7,3 +7,4 @@
 googletrans==3.1.0a0
 boto3
 awscli
+line-bot-sdk

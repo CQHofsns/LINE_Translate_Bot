@@ -6,3 +6,4 @@
 #accelerate
 googletrans==3.1.0a0
 boto3
+line-bot-sdk
