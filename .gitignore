@@ -9,7 +9,6 @@ __pycache__/
 
 # Custom
 translate_model/cache_dir/
-lambda-service/cdk/
 
 # C extensions
 *.so
