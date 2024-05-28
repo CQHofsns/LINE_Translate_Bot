@@ -25,30 +25,65 @@ def message_handling(message):
         "chinese": "zh-cn",
         "thai": "th"
     }
-    command_regex= fr"->to:([\w\.\?]+)$"
+    command_regex= fr"->to:((?:[\w\.\?]+,?\s?)+)$"
     message= str(message).strip()
 
     command_trigger= regex.search(command_regex, message, regex.IGNORECASE)
     if command_trigger:
         message= message.replace(str(command_trigger.group(0)), "")
         srclang_code= detect(text= message)
-        destLang= str(command_trigger.group(1).strip(".?")).lower()
-        
-        if destLang in lang_dict:
-            translated_message= translated_function(
-                text= message, 
-                src= srclang_code, 
-                dest= lang_dict[destLang]
-            ).text
+        destLang= command_trigger.group(1).split(",")
+        destLang= [lang.strip(".?").strip().lower() for lang in destLang]
+        print(destLang)
+        print(len(destLang))
+        if len(destLang)> 1:
+            message_template= "User request multi-languages translation:\n"
+            translated_message_dict= dict()
+            for lang in destLang:
+                if lang in lang_dict:
+                    translated_message_dict[lang]= translated_function(
+                        text= message, 
+                        src= srclang_code, 
+                        dest= lang_dict[lang]
+                    ).text
+            
+            if len(translated_message_dict)== 0:
+                return_message= "Sorry, I can not check the language you want to translate, maybe there is a typo in you message?? "
+                translated_message= translated_function(
+                    text= return_message, 
+                    src= "en", 
+                    dest= srclang_code
+                ).text
+                translated_message= translated_message+ " !!(・・ ) ?"
 
-        else:
-            return_message= "Sorry, I can check the language you want to translate, maybe there is a typo in you message?? "
-            translated_message= translated_function(
-                text= return_message, 
-                src= "en", 
-                dest= srclang_code
-            ).text
-            translated_message= translated_message+ " !!(・・ ) ?"
+                return translated_message
+            
+            for lang in translated_message_dict.keys():
+                message_template= f"""{message_template}
+                ###### {lang} ######
+                {translated_message_dict[lang]}
+                #####################
+                ---------------------
+                """
+            return message_template
+        
+        elif len(destLang)== 1:
+            destLang= destLang[0].strip().lower()
+            if destLang in lang_dict:
+                translated_message= translated_function(
+                    text= message, 
+                    src= srclang_code, 
+                    dest= lang_dict[destLang]
+                ).text
+
+            else:
+                return_message= "Sorry, I can not check the language you want to translate, maybe there is a typo in you message?? "
+                translated_message= translated_function(
+                    text= return_message, 
+                    src= "en", 
+                    dest= srclang_code
+                ).text
+                translated_message= translated_message+ " !!(・・ ) ?"
     
         return translated_message
 
